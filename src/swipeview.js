@@ -35,7 +35,7 @@ var SwipeView = (function(){
 			
 			div = document.createElement('div');
 			div.id = 'swipeview-slider';
-			div.style.cssText = 'position:relative;top:0;height:100%;width:100%;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);-webkit-transition-timing-function:ease-out';
+			div.style.cssText = '-moz-transform: translate3d(-0px, 0px, 0px);-moz-transition-duration: 0ms;-moz-transition-timing-function:ease-out;position:relative;top:0;height:100%;width:100%;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);-webkit-transition-timing-function:ease-out';
 			this.wrapper.appendChild(div);
 			this.slider = div;
 
@@ -44,7 +44,7 @@ var SwipeView = (function(){
 			for (i=-1; i<2; i++) {
 				div = document.createElement('div');
 				div.id = 'swipeview-masterpage-' + (i+1);
-				div.style.cssText = '-webkit-transform:translateZ(0);position:absolute;top:0;height:100%;width:100%;left:' + i*100 + '%';
+				div.style.cssText = '-moz-transform:translateZ(0);-webkit-transform:translateZ(0);position:absolute;top:0;height:100%;width:100%;left:' + i*100 + '%';
 				if (!div.dataset) div.dataset = {};
 				pageIndex = i == -1 ? this.options.numberOfPages - 1 : i;
 				div.dataset.pageIndex = pageIndex;
@@ -145,6 +145,8 @@ var SwipeView = (function(){
 			this.page = p;
 			this.pageIndex = p;
 			this.slider.style.webkitTransitionDuration = '0';
+			this.slider.style.MozTransitionDuration = '0ms';
+
 			this.__pos(-p * this.pageWidth);
 
 			this.currentMasterPage = (this.page + 1) - Math.floor((this.page + 1) / 3) * 3;
@@ -226,11 +228,14 @@ var SwipeView = (function(){
 		__pos: function (x) {
 			this.x = x;
 			this.slider.style.webkitTransform = 'translate3d(' + x + 'px,0,0)';
+			 this.slider.style.MozTransform= 'translate3d(' + x + 'px,0,0)';
 		},
 
 		__resize: function () {
 			this.refreshSize();
 			this.slider.style.webkitTransitionDuration = '0';
+			this.slider.style.MozTransitionDuration = '0ms';
+
 			this.__pos(-this.page * this.pageWidth);
 		},
 
@@ -257,7 +262,8 @@ var SwipeView = (function(){
 			this.x = matrix[4] * 1;*/
 
 			this.slider.style.webkitTransitionDuration = '0';
-			
+			this.slider.style.MozTransitionDuration = '0ms';
+
 			this.__event('touchstart');
 		},
 		
@@ -330,6 +336,8 @@ var SwipeView = (function(){
 			// Check if we exceeded the snap threshold
 			if (dist < this.snapThreshold) {
 				this.slider.style.webkitTransitionDuration = Math.floor(300 * dist / this.snapThreshold) + 'ms';
+				this.slider.style.MozTransitionDuration = Math.floor(300 * dist / this.snapThreshold) + 'ms';
+
 				this.__pos(-this.page * this.pageWidth);
 				return;
 			}
@@ -368,11 +376,11 @@ var SwipeView = (function(){
 			}
 
 			// Add active class to current page
-			className = this.masterPages[this.currentMasterPage].className;
-			/(^|\s)swipeview-active(\s|$)/.test(className) || (this.masterPages[this.currentMasterPage].className = !className ? 'swipeview-active' : className + ' swipeview-active');
+			//this.masterPages[this.currentMasterPage].className='swipeview-active';
+			/(^|\s)swipeview-active(\s|$)/.test(className) || (this.masterPages[this.currentMasterPage].className =! className ? 'swipeview-active' : className + ' swipeview-active');
 
 			// Add loading class to flipped page
-			className = this.masterPages[pageFlip].className;
+			//this.masterPages[pageFlip].className='swipeview-loading';
 			/(^|\s)swipeview-loading(\s|$)/.test(className) || (this.masterPages[pageFlip].className = !className ? 'swipeview-loading' : className + ' swipeview-loading');
 			
 			pageFlipIndex = pageFlipIndex - Math.floor(pageFlipIndex / this.options.numberOfPages) * this.options.numberOfPages;
@@ -381,6 +389,9 @@ var SwipeView = (function(){
 			newX = -this.page * this.pageWidth;
 			
 			this.slider.style.webkitTransitionDuration = Math.floor(500 * Math.abs(this.x - newX) / this.pageWidth) + 'ms';
+			this.slider.style.MozTransitionDuration = Math.floor(500 * Math.abs(this.x - newX) / this.pageWidth) + 'ms';
+
+
 
 			// Hide the next page if we decided to disable looping
 			if (!this.options.loop) {
